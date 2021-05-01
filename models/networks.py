@@ -574,7 +574,7 @@ class TransformerGenerator(nn.Module):
 
         # transformer
         feat = self.transformer(emb)
-
+        print(feat.shape)
         # classifier
         logits = self.classifier(feat[:, 0])
         print(logits.shape)
