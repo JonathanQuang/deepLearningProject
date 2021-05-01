@@ -577,7 +577,7 @@ class TransformerGenerator(nn.Module):
 
         # classifier
         logits = self.classifier(feat[:, 0])
-        print(logits.shape())
+        print(logits.shape)
         return logits
 class ResnetBlock(nn.Module):
     """Define a Resnet block"""
