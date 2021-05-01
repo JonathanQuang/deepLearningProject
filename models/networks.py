@@ -394,13 +394,7 @@ class TransformerGenerator(nn.Module):
         """
         assert(n_blocks >= 0)
         super(TransformerGenerator, self).__init__()
-        if type(norm_layer) == functools.partial:
-            use_bias = norm_layer.func == nn.InstanceNorm2d
-        else:
-            use_bias = norm_layer == nn.InstanceNorm2d
-
-        model = [norm_layer(ngf),
-                nn.Transformer()]
+        model = [nn.Transformer()]
 
         self.model = nn.Sequential(*model)
 
