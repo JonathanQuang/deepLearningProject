@@ -563,9 +563,7 @@ class TransformerGenerator(nn.Module):
         self.classifier = nn.Linear(emb_dim, num_classes)
 
     def forward(self, x):
-        print(x.shape)
         emb = self.embedding(x)     # (n, c, gh, gw)
-        print(emb.shape)
         emb = emb.permute(0, 2, 3, 1)  # (n, gh, hw, c)
         b, h, w, c = emb.shape
         emb = emb.reshape(b, h * w, c)
@@ -576,11 +574,8 @@ class TransformerGenerator(nn.Module):
 
         # transformer
         feat = self.transformer(emb)
-        print(feat.shape)
         feat = feat[:,1:, :]
-        print(feat.shape)
         feat = feat.reshape(b, 3, 256, 256)
-        print(feat.shape)
         # classifier
         #logits = self.classifier(feat[:, 0])
         #print(logits.shape)
