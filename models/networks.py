@@ -575,10 +575,14 @@ class TransformerGenerator(nn.Module):
         # transformer
         feat = self.transformer(emb)
         print(feat.shape)
+        feat = feat[:,1:, :]
+        print(feat.shape)
+        feat = feat.reshape(b, h, w, c)
+        print(feat.shape)
         # classifier
-        logits = self.classifier(feat[:, 0])
-        print(logits.shape)
-        return logits
+        #logits = self.classifier(feat[:, 0])
+        #print(logits.shape)
+        return feat
 class ResnetBlock(nn.Module):
     """Define a Resnet block"""
 
