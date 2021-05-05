@@ -1,3 +1,12 @@
+These branches correspond to the following modifications to the pix2pix architecture:
+
+
+
+
+
+
+
+-- Below is the README from the original pix2pix and CycleGAN repo
 
 <img src='imgs/horse2zebra.gif' align="right" width=384>
 
