@@ -1,7 +1,10 @@
 These branches correspond to the following modifications to the pix2pix architecture:
 
 
-
+conner - Implementation of GAN Training Techniques
+yang - In charge of implementing transformers in skip connections
+jonathan - In charge of implementing LSTMs in skip connections
+ruarai - In charge of implementing visual transformer
 
 
 
