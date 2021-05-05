@@ -252,7 +252,10 @@ class GANLoss(nn.Module):
             target_tensor = self.real_label
         else:
             target_tensor = self.fake_label
-        return target_tensor.expand_as(prediction)
+        if target_tensor == 1:
+            return torch.zeros_like(prediction).uniform_(0.8, 1.1)
+        return torch.zeros_like(prediction).uniform_(0.0, 0.2)
+        # return target_tensor.expand_as(prediction)
 
     def __call__(self, prediction, target_is_real):
         """Calculate loss given Discriminator's output and grount truth labels.
@@ -341,10 +344,17 @@ class ResnetGenerator(nn.Module):
                  nn.Conv2d(input_nc, ngf, kernel_size=7, padding=0, bias=use_bias),
                  norm_layer(ngf),
                  nn.ReLU(True)]
+        # model = [nn.ReflectionPad2d(3),
+        #          nn.Conv2d(input_nc, ngf, kernel_size=7, padding=0, bias=use_bias),
+        #          norm_layer(ngf),
+        #          nn.LeakyReLU(inplace=True)]
 
         n_downsampling = 2
         for i in range(n_downsampling):  # add downsampling layers
             mult = 2 ** i
+            # model += [nn.Conv2d(ngf * mult, ngf * mult * 2, kernel_size=3, stride=2, padding=1, bias=use_bias),
+            #           norm_layer(ngf * mult * 2),
+            #           nn.LeakyReLU(inplace=True)]
             model += [nn.Conv2d(ngf * mult, ngf * mult * 2, kernel_size=3, stride=2, padding=1, bias=use_bias),
                       norm_layer(ngf * mult * 2),
                       nn.ReLU(True)]
@@ -362,6 +372,12 @@ class ResnetGenerator(nn.Module):
                                          bias=use_bias),
                       norm_layer(int(ngf * mult / 2)),
                       nn.ReLU(True)]
+            # model += [nn.ConvTranspose2d(ngf * mult, int(ngf * mult / 2),
+            #                              kernel_size=3, stride=2,
+            #                              padding=1, output_padding=1,
+            #                              bias=use_bias),
+            #           norm_layer(int(ngf * mult / 2)),
+            #           nn.LeakyReLU(inplace=True)]
         model += [nn.ReflectionPad2d(3)]
         model += [nn.Conv2d(ngf, output_nc, kernel_size=7, padding=0)]
         model += [nn.Tanh()]
@@ -411,6 +427,7 @@ class ResnetBlock(nn.Module):
             raise NotImplementedError('padding [%s] is not implemented' % padding_type)
 
         conv_block += [nn.Conv2d(dim, dim, kernel_size=3, padding=p, bias=use_bias), norm_layer(dim), nn.ReLU(True)]
+        # conv_block += [nn.Conv2d(dim, dim, kernel_size=3, padding=p, bias=use_bias), norm_layer(dim), nn.LeakyReLU(inplace=True)]
         if use_dropout:
             conv_block += [nn.Dropout(0.5)]
 

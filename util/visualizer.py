@@ -66,23 +66,28 @@ class Visualizer():
         self.name = opt.name
         self.port = opt.display_port
         self.saved = False
-        if self.display_id > 0:  # connect to a visdom server given <display_port> and <display_server>
-            import visdom
-            self.ncols = opt.display_ncols
-            self.vis = visdom.Visdom(server=opt.display_server, port=opt.display_port, env=opt.display_env)
-            if not self.vis.check_connection():
-                self.create_visdom_connections()
-
-        if self.use_html:  # create an HTML object at <checkpoints_dir>/web/; images will be saved under <checkpoints_dir>/web/images/
-            self.web_dir = os.path.join(opt.checkpoints_dir, opt.name, 'web')
-            self.img_dir = os.path.join(self.web_dir, 'images')
-            print('create web directory %s...' % self.web_dir)
-            util.mkdirs([self.web_dir, self.img_dir])
+        # if self.display_id > 0:  # connect to a visdom server given <display_port> and <display_server>
+        #     import visdom
+        #     self.ncols = opt.display_ncols
+        #     self.vis = visdom.Visdom(server=opt.display_server, port=opt.display_port, env=opt.display_env)
+        #     if not self.vis.check_connection():
+        #         self.create_visdom_connections()
+        #
+        # if self.use_html:  # create an HTML object at <checkpoints_dir>/web/; images will be saved under <checkpoints_dir>/web/images/
+        #     self.web_dir = os.path.join(opt.checkpoints_dir, opt.name, 'web')
+        #     self.img_dir = os.path.join(self.web_dir, 'images')
+        #     print('create web directory %s...' % self.web_dir)
+        #     util.mkdirs([self.web_dir, self.img_dir])
         # create a logging file to store training losses
-        self.log_name = os.path.join(opt.checkpoints_dir, opt.name, 'loss_log.txt')
-        with open(self.log_name, "a") as log_file:
-            now = time.strftime("%c")
-            log_file.write('================ Training Loss (%s) ================\n' % now)
+        # self.log_name = os.path.join(opt.checkpoints_dir, opt.name, 'loss_log.txt')
+        # with open(self.log_name, "a") as log_file:
+        #     now = time.strftime("%c")
+        #     log_file.write('================ Training Loss (%s) ================\n' % now)
+        self.log_name = os.path.join(opt.checkpoints_dir, opt.name, 'loss_log.csv')
+        with open(self.log_name, 'a') as f:
+            f.write('epoch,iters,time,data,g_gan,g_l1,d_real,d_fake\n')
+
+
 
     def reset(self):
         """Reset the self.saved status"""
@@ -217,5 +222,11 @@ class Visualizer():
             message += '%s: %.3f ' % (k, v)
 
         print(message)  # print the message
-        with open(self.log_name, "a") as log_file:
-            log_file.write('%s\n' % message)  # save the message
+        # with open(self.log_name, "a") as log_file:
+        #     log_file.write('%s\n' % message)  # save the message
+        # CSV writing
+        row = '%d,%d,%.3f,%.3f' % (epoch, iters, t_comp, t_data)
+        for k, v in losses.items():
+            row += ',%.3f' % v
+        with open(self.log_name, 'a') as f:
+            f.write(f'{row}\n')
